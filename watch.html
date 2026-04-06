@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>{{ title }} - Nawab Player</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #000; color: #fff; font-family: sans-serif; }
+        .video-container {
+            position: relative; padding-bottom: 56.25%; height: 0;
+            background: #080808; border: 2px solid #e50914; border-radius: 15px; overflow: hidden;
+            box-shadow: 0 0 25px rgba(229, 9, 20, 0.5);
+        }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; z-index: 2; }
+        .btn-server.active { background-color: #e50914 !important; color: white !important; border-color: #e50914 !important; }
+        .loader-bg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #444; z-index: 1; }
+    </style>
+</head>
+<body>
+    <div class="container py-4 text-center">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="/" class="btn btn-outline-light btn-sm">← Back</a>
+            <h4 class="text-danger fw-bold m-0">{{ title }}</h4>
+            <div style="width: 40px;"></div> 
+        </div>
+
+        <div class="mb-3">
+            <p class="small text-secondary mb-2">सर्वर बदलें (Switch Server if it doesn't play):</p>
+            {% for name, url in sources.items() %}
+            <button onclick="changeServer('{{ url }}', this)" 
+                    class="btn btn-sm btn-outline-danger btn-server m-1 {% if loop.first %}active{% endif %}">
+                {{ name }}
+            </button>
+            {% endfor %}
+        </div>
+
+        <div class="video-container shadow-lg">
+            <div class="loader-bg">Loading Secure Stream...</div>
+            <iframe id="player" 
+                    src="{{ sources.values()|first }}" 
+                    allowfullscreen="true" 
+                    webkitallowfullscreen="true" 
+                    mozallowfullscreen="true"
+                    referrerpolicy="no-referrer"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    sandbox="allow-forms allow-scripts allow-pointer-lock allow-same-origin allow-top-navigation allow-presentation">
+            </iframe>
+        </div>
+
+        <div class="mt-4 p-3 bg-dark border border-secondary rounded text-start">
+            <h6 class="text-warning fw-bold">🚀 "Media Unavailable" को कैसे ठीक करें?</h6>
+        <p class="small text-secondary mb-2">1. <b>USE </b> ANY <b>VPN</b> TO ACCESS THE STREAM</p>
+            <p class="small text-secondary mb-3">2. TO <b> PLAY </b> MOVIES <b> DIRECTLY </b> CLICK ON DIRECT PLAY </p>
+            
+            <button class="btn btn-danger w-100 mt-3 fw-bold py-2 shadow" onclick="forcePlay()">
+                ⚡ DIRECT PLAY (Instant Fix)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Updated Server Switching logic
+        function changeServer(url, btn) {
+            const player = document.getElementById('player');
+            // Reset and Reload
+            player.src = ""; 
+            setTimeout(() => { player.src = url; }, 50);
+
+            // Update UI
+            const buttons = document.querySelectorAll('.btn-server');
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function forcePlay() {
+            const currentUrl = document.getElementById('player').src;
+            if(currentUrl) {
+                window.open(currentUrl, '_blank');
+            }
+        }
+    </script>
+</body>
+</html>

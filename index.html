@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nawab Movies - Best 4K Hindi Streaming</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --brand-red: #e50914;
+            --bg-dark: #0a0a0a;
+            --card-bg: #141414;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Hero / Logo Section */
+        .hero-section {
+            padding: 60px 0 40px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            border-bottom: 2px solid #222;
+        }
+
+        .brand-logo {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--brand-red);
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            margin-bottom: 10px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 600px;
+            margin: 30px auto;
+        }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #333;
+            border-radius: 50px;
+            color: white;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--brand-red);
+            box-shadow: 0 0 20px rgba(229, 9, 20, 0.3);
+            color: white;
+        }
+
+        /* Movie Poster Grid (Netflix Style) */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 25px;
+            padding: 40px 0;
+        }
+
+        .movie-card {
+            position: relative;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.08);
+            border-color: var(--brand-red);
+            z-index: 10;
+        }
+
+        /* Fixed Aspect Ratio for Posters */
+        .poster-wrapper {
+            aspect-ratio: 2/3;
+            width: 100%;
+            background: #222; /* Placeholder Loading color */
+            overflow: hidden;
+        }
+
+        .poster-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures image isn't stretched */
+            transition: 0.5s;
+        }
+
+        .movie-card:hover .poster-img {
+            transform: scale(1.1);
+        }
+
+        /* Info Section */
+        .movie-info {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .movie-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 8px;
+        }
+
+        .badge-4k {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--brand-red);
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 2px 6px;
+            border-radius: 4px;
+            z-index: 2;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 576px) {
+            .movie-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            .brand-logo { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero-section text-center">
+        <div class="container">
+            <h1 class="brand-logo">Nawab Movies</h1>
+            <p class="text-secondary fw-bold">Best 4k movies in Hindi</p>
+            
+            <div class="search-container">
+                <form action="/" method="GET">
+                    <input type="text" name="search" class="form-control search-input" 
+                           placeholder="SEARCH HERE..." autocomplete="off">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h5 class="mt-4 mb-3 text-uppercase text-secondary small fw-bold" style="letter-spacing: 2px;">
+            {% if request.args.get('search') %} SEARCHING RESULTS {% else %} TRENDING MOVIES  {% endif %}
+        </h5>
+
+        <div class="movie-grid">
+            {% for m in content %}
+                {% if m.poster_path %}
+                <div class="movie-card shadow-lg" onclick=location.href="/watch/{{ m.media_type or 'movie' }}/{{ m.id }}">
+                    <span class="badge-4k">4K HDR</span>
+                    
+                    <div class="poster-wrapper">
+                        <img src="{{ img_base }}{{ m.poster_path }}" 
+                             class="poster-img" 
+                             alt="{{ m.title or m.name }}"
+                             onerror="this.src='https://via.placeholder.com/500x750?text=NAWAB+CINEMA'">
+                             </div>
+
+                    <div class="movie-info">
+                        <p class="movie-title">{{ m.title or m.name }}</p>
+                        <button class="btn btn-sm btn-danger w-100 fw-bold" style="font-size: 0.8rem;">WATCH</button>
+                    </div>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="col-12 text-center py-5">
+                    <h4 class="text-secondary">NO MOVIE FOUND (Invalid API Key or Bad Search).</h4>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer class="text-center py-5 mt-5" style="border-top: 1px solid #1a1a1a;">
+        <p class="text-secondary small">© 2026 Nawab Cinema Team | High-Speed Node</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
